@@ -6,42 +6,47 @@
   <style>
     body {
       margin: 0;
+      overflow: hidden; /* Prevent scroll bars */
     }
 
-    #image-container {
+    #container {
       position: relative;
       height: 100vh;
     }
 
-    #custom-text {
+    #image-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #custom-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: white;
-      font-size: 24px;
       text-align: center;
       max-width: 80%;
       z-index: 1; /* Set a higher z-index to ensure it appears above the images */
     }
 
-    .arrow {
+    .arrow-container {
       position: absolute;
-      bottom: 50%;
+      bottom: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      z-index: 2; /* Set a higher z-index to ensure it appears above the images */
+    }
+
+    .arrow {
       font-size: 24px;
       cursor: pointer;
       background: white;
       border: 1px solid #ccc;
       padding: 5px;
-      z-index: 2; /* Set a higher z-index to ensure it appears above the images */
-    }
-
-    #left-arrow {
-      left: 10px;
-    }
-
-    #right-arrow {
-      right: 10px;
     }
 
     #image-container img {
@@ -62,7 +67,9 @@
 
       const baseUrl = 'https://raw.githubusercontent.com/jim919/U/main/images/';
 
+      const container = document.getElementById('container');
       const imageContainer = document.getElementById('image-container');
+      const customContainer = document.getElementById('custom-container');
       const customText = document.getElementById('custom-text');
 
       function showImage(index) {
@@ -112,11 +119,15 @@
   </script>
 </head>
 <body>
-  <div id="image-container">
-    <div id="custom-text"></div>
+  <div id="container">
+    <div id="image-container"></div>
+    <div id="custom-container">
+      <div id="custom-text"></div>
+    </div>
+    <div class="arrow-container">
+      <div id="left-arrow" class="arrow">&lt;</div>
+      <div id="right-arrow" class="arrow">&gt;</div>
+    </div>
   </div>
-
-  <div id="left-arrow" class="arrow">&lt;</div>
-  <div id="right-arrow" class="arrow">&gt;</div>
 </body>
 </html>
