@@ -59,30 +59,6 @@
     }
   </style>
   <script>
-  <script>
-  const container = document.getElementById('container');
-
-  function toggleFullScreen() {
-    if (!document.fullscreenElement) {
-      container.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  }
-
-  document.addEventListener('keydown', function (event) {
-    // Toggle fullscreen on F key press
-    if (event.key === 'f' || event.key === 'F') {
-      toggleFullScreen();
-    }
-  });
-
-  // You can also add a button or any other trigger to toggle fullscreen
-  // For example, add the following line in your HTML body:
-  // <button onclick="toggleFullScreen()">Toggle Fullscreen</button>
-</script>
     document.addEventListener('DOMContentLoaded', function () {
       let currentImageIndex = 0;
       const images = [
