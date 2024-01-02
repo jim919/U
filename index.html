@@ -44,8 +44,10 @@
         'image1.jpg',
         'image2.jpg',
         'image3.jpg'
-        // Add more image URLs as needed
+        // Add more image filenames as needed
       ];
+
+      const baseUrl = 'https://raw.githubusercontent.com/jim919/U/main/images/'; // Adjust this URL
 
       const imageContainer = document.getElementById('image-container');
       const imageText = document.getElementById('image-text');
@@ -60,7 +62,7 @@
         }
 
         const imageUrl = images[currentImageIndex];
-        const imagePath = 'images/' + imageUrl; // Change this path accordingly
+        const imagePath = baseUrl + imageUrl;
 
         imageContainer.innerHTML = `<img src="${imagePath}" alt="Image">`;
         imageText.textContent = `Image ${currentImageIndex + 1} of ${images.length}`;
