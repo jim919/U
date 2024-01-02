@@ -18,15 +18,15 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: black; /* Set the text color */
-      font-size: 500px;
+      color: white; /* Set the text color */
+      font-size: 24px;
       text-align: center;
       max-width: 80%; /* Set the maximum width for the text */
     }
 
     .arrow {
       position: absolute;
-      bottom: 50%;
+      bottom: 10px;
       font-size: 24px;
       cursor: pointer;
       background: white;
@@ -77,9 +77,6 @@
 
         imageContainer.innerHTML = `<img src="${imagePath}" alt="Image">`;
         customText.textContent = `Hello`; // Add your own text
-
-        // Uncomment the line below if you want to hide the default image text
-        // imageText.textContent = '';
 
       }
 
