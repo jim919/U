@@ -12,6 +12,7 @@
     #container {
       position: relative;
       height: 100vh;
+      overflow: hidden;
     }
 
     #image-container {
@@ -20,7 +21,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 0; /* Set a lower z-index for the images */
+      z-index: 0;
     }
 
     #custom-container {
@@ -30,7 +31,7 @@
       transform: translateX(-50%);
       text-align: center;
       max-width: 80%;
-      z-index: 1; /* Set a higher z-index for the text */
+      z-index: 1;
     }
 
     #custom-text {
@@ -45,7 +46,7 @@
       width: 100%;
       display: flex;
       justify-content: space-between;
-      z-index: 2; /* Set a higher z-index for the arrow container */
+      z-index: 2;
     }
 
     .arrow {
@@ -157,3 +158,4 @@
   </div>
 </body>
 </html>
+
