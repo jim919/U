@@ -26,7 +26,7 @@
 
     .arrow {
       position: absolute;
-      bottom: 10px;
+      bottom: 50px;
       font-size: 24px;
       cursor: pointer;
       background: white;
@@ -76,8 +76,22 @@
         const imagePath = baseUrl + imageUrl;
 
         imageContainer.innerHTML = `<img src="${imagePath}" alt="Image">`;
-        customText.textContent = `Hello`; // Add your own text
 
+        // Display custom text based on the current image index
+        switch (currentImageIndex) {
+          case 0:
+            customText.textContent = "Hi";
+            break;
+          case 1:
+            customText.textContent = "NO";
+            break;
+          case 2:
+            customText.textContent = "Custom";
+            break;
+          // Add more cases as needed
+          default:
+            customText.textContent = "";
+        }
       }
 
       function showNextImage() {
