@@ -2,70 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      overflow: hidden;
+      overflow: hidden; 
       background: black;
+    }
+
+    #container {
+      position: relative;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
+      overflow: hidden;
     }
 
     #image-container {
-      text-align: center;
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden; /* Ensure images don't overflow the container */
-      pointer-events: none; /* Disable touch events for the image container */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
 
     #custom-container {
-      text-align: center;
-      max-width: 80%;
-      z-index: 1;
-      background: rgba(200, 200, 200, 0.8);
-      padding: 10px;
-      border-radius: 5px;
       position: absolute;
       bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
+      text-align: center;
+      max-width: 80%;
+      z-index: 1;
     }
 
     #custom-text {
-      margin: 0;
+      background: rgba(200, 200, 200, 0.8); /* Grey background color with some transparency */
+      padding: 10px;
+      border-radius: 5px;
     }
 
     .arrow-container {
-      display: flex;
-      justify-content: space-between;
-      z-index: 2;
-      padding: 10px;
-      pointer-events: auto; /* Enable touch events for the arrow container */
       position: absolute;
       top: 50%;
       width: 100%;
       display: flex;
       justify-content: space-between;
-      z-index: 2; /* Set a higher z-index to ensure it appears above the images */
+      z-index: 2;
     }
 
     .arrow {
-      font-size: 18px;
+      font-size: 24px;
       cursor: pointer;
       background: white;
       border: 1px solid #ccc;
       padding: 5px;
-      user-select: none;
     }
 
     #image-container img {
-      max-height: 100%;
-      max-width: 100%;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
     }
   </style>
@@ -76,23 +71,33 @@
         'image1.jpg',
         'image2.jpg',
         'image3.jpg'
+        // Add more image filenames as needed
       ];
 
       const baseUrl = 'https://raw.githubusercontent.com/jim919/U/main/images/';
 
+      const container = document.getElementById('container');
       const imageContainer = document.getElementById('image-container');
-      const customContainer = document.getElementById('custom-container');
       const customText = document.getElementById('custom-text');
-      const leftArrow = document.getElementById('left-arrow');
-      const rightArrow = document.getElementById('right-arrow');
 
-      // Request fullscreen
-      const requestFullScreen = document.documentElement.requestFullscreen ||
-                                document.documentElement.mozRequestFullScreen ||
-                                document.documentElement.webkitRequestFullscreen ||
-                                document.documentElement.msRequestFullscreen;
-      if (requestFullScreen) {
-        requestFullScreen.call(document.documentElement);
+      const fullscreenButton = document.createElement('button');
+      fullscreenButton.textContent = 'Toggle Fullscreen';
+      fullscreenButton.id = 'fullscreen-button';
+      fullscreenButton.style.position = 'fixed';
+      fullscreenButton.style.top = '10px';
+      fullscreenButton.style.right = '10px';
+      document.body.appendChild(fullscreenButton);
+
+      fullscreenButton.addEventListener('click', toggleFullScreen);
+
+      function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          container.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+          });
+        } else {
+          document.exitFullscreen();
+        }
       }
 
       function showImage(index) {
@@ -120,6 +125,7 @@
           case 2:
             customText.textContent = "Custom text for image 3";
             break;
+          // Add more cases as needed
           default:
             customText.textContent = "";
         }
@@ -133,44 +139,23 @@
         showImage(currentImageIndex - 1);
       }
 
-      leftArrow.addEventListener('click', showPreviousImage);
-      rightArrow.addEventListener('click', showNextImage);
-
-      // Touch events for arrows only
-      let touchStartX = 0;
-
-      imageContainer.addEventListener('touchstart', function (e) {
-        touchStartX = e.touches[0].clientX;
-      });
-
-      imageContainer.addEventListener('touchend', function (e) {
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchThreshold = 50; // Adjust the threshold as needed
-
-        if (touchEndX < touchStartX - touchThreshold) {
-          showNextImage(); // Swipe left
-        } else if (touchEndX > touchStartX + touchThreshold) {
-          showPreviousImage(); // Swipe right
-        }
-      });
-
-      // Orientation change event for adjusting image size
-      window.addEventListener('orientationchange', function () {
-        showImage(currentImageIndex);
-      });
+      document.getElementById('left-arrow').addEventListener('click', showPreviousImage);
+      document.getElementById('right-arrow').addEventListener('click', showNextImage);
 
       showImage(currentImageIndex);
     });
   </script>
 </head>
 <body>
-  <div id="image-container"></div>
-  <div id="custom-container">
-    <div id="custom-text"></div>
-  </div>
-  <div class="arrow-container">
-    <div id="left-arrow" class="arrow">&lt;</div>
-    <div id="right-arrow" class="arrow">&gt;</div>
+  <div id="container">
+    <div id="image-container"></div>
+    <div id="custom-container">
+      <div id="custom-text"></div>
+    </div>
+    <div class="arrow-container">
+      <div id="left-arrow" class="arrow">&lt;</div>
+      <div id="right-arrow" class="arrow">&gt;</div>
+    </div>
   </div>
 </body>
 </html>
