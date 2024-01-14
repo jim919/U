@@ -4,105 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      overflow: hidden; 
-      background: black;
-    }
-
-    #container {
-      position: relative;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    #image-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-
-    #custom-container {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      max-width: 80%;
-      z-index: 1;
-    }
-
-    #custom-text {
-      background: rgba(200, 200, 200, 0.8); /* Grey background color with some transparency */
-      padding: 10px;
-      border-radius: 5px;
-    }
-
-    .arrow-container {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      z-index: 2;
-    }
-
-    .arrow {
-      font-size: 24px;
-      cursor: pointer;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 5px;
-    }
-
-    #image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+    /* Your existing styles here */
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       let currentImageIndex = 0;
       const images = [
-        'image8.jpg',
-        'image1.jpg',
         'image1.jpg',
         'image2.jpg',
-        'image3.jpg'
-        // Add more image filenames as needed
+        'image3.jpg',
+        'image4.jpg',  // Add more images as needed
+        'image5.jpg'
       ];
 
       const baseUrl = 'https://raw.githubusercontent.com/jim919/U/main/images/';
 
-      const container = document.getElementById('container');
       const imageContainer = document.getElementById('image-container');
+      const customContainer = document.getElementById('custom-container');
       const customText = document.getElementById('custom-text');
-
-      const fullscreenButton = document.createElement('button');
-      fullscreenButton.textContent = 'Toggle Fullscreen';
-      fullscreenButton.id = 'fullscreen-button';
-      fullscreenButton.style.position = 'fixed';
-      fullscreenButton.style.top = '10px';
-      fullscreenButton.style.right = '10px';
-      document.body.appendChild(fullscreenButton);
-
-      fullscreenButton.addEventListener('click', toggleFullScreen);
-
-      function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-          container.requestFullscreen().catch(err => {
-            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-          });
-        } else {
-          document.exitFullscreen();
-        }
-      }
+      const leftArrow = document.getElementById('left-arrow');
+      const fullscreenButton = document.getElementById('fullscreen-button');
+      const rightArrow = document.getElementById('right-arrow');
 
       function showImage(index) {
+        imageContainer.innerHTML = 'Loading...';
+
         if (index < 0) {
           currentImageIndex = images.length - 1;
         } else if (index >= images.length) {
@@ -114,28 +40,31 @@
         const imageUrl = images[currentImageIndex];
         const imagePath = baseUrl + imageUrl;
 
-        imageContainer.innerHTML = `<img src="${imagePath}" alt="Image">`;
+        const img = new Image();
+        img.src = imagePath;
 
-        // Display custom text based on the current image index
-        switch (currentImageIndex) {
-          case 0:
-            customText.textContent = "";
-            break;
-          case 1:
-            customText.textContent = "Ο θείος μου ήταν ένας βαθύτατα
-εγωκεντρικός χαρακτήρας. Και όμως,
-παρά την συχνά αντιφατική του
-προσωπικότητα πάντα πετύχαινε να
-προκαλεί τον θαυμασμό και σεβασμό των
-γύρω του.";
-            break;
-          case 2:
-            customText.textContent = "Custom text for image 3";
-            break;
-          // Add more cases as needed
-          default:
-            customText.textContent = "";
-        }
+        img.onload = function () {
+          imageContainer.innerHTML = `<img src="${img.src}" alt="Image">`;
+
+          switch (currentImageIndex) {
+            case 0:
+              customText.textContent = "Γεια σας"; // Greek text for "Hello"
+              break;
+            case 1:
+              customText.textContent = "Όχι"; // Greek text for "No"
+              break;
+            case 2:
+              customText.textContent = "Custom text for image 3";
+              break;
+            default:
+              customText.textContent = "";
+          }
+        };
+
+        img.onerror = function () {
+          console.error(`Failed to load image: ${img.src}`);
+          imageContainer.innerHTML = 'Error loading image';
+        };
       }
 
       function showNextImage() {
@@ -146,23 +75,70 @@
         showImage(currentImageIndex - 1);
       }
 
-      document.getElementById('left-arrow').addEventListener('click', showPreviousImage);
-      document.getElementById('right-arrow').addEventListener('click', showNextImage);
+      function toggleFullscreen() {
+        const elem = document.documentElement;
+
+        if (!document.fullscreenElement) {
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+          } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+      }
+
+      leftArrow.addEventListener('click', showPreviousImage);
+      rightArrow.addEventListener('click', showNextImage);
+      fullscreenButton.addEventListener('click', toggleFullscreen);
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      imageContainer.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+      });
+
+      imageContainer.addEventListener('touchend', function (e) {
+        touchEndX = e.changedTouches[0].clientX;
+
+        if (touchEndX < touchStartX) {
+          showNextImage(); // Swipe left
+        } else if (touchEndX > touchStartX) {
+          showPreviousImage(); // Swipe right
+        }
+      });
+
+      window.addEventListener('orientationchange', function () {
+        showImage(currentImageIndex);
+      });
 
       showImage(currentImageIndex);
     });
   </script>
 </head>
 <body>
-  <div id="container">
-    <div id="image-container"></div>
-    <div id="custom-container">
-      <div id="custom-text"></div>
-    </div>
-    <div class="arrow-container">
-      <div id="left-arrow" class="arrow">&lt;</div>
-      <div id="right-arrow" class="arrow">&gt;</div>
-    </div>
+  <div id="image-container"></div>
+  <div id="custom-container">
+    <div id="custom-text"></div>
+  </div>
+  <div class="arrow-container">
+    <button id="left-arrow" class="arrow" onclick="showPreviousImage()">&lt;</button>
+    <button id="fullscreen-button" class="arrow" onclick="toggleFullscreen()">&#9655;</button>
+    <button id="right-arrow" class="arrow" onclick="showNextImage()">&gt;</button>
   </div>
 </body>
 </html>
