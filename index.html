@@ -2,9 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <style>
-    /* Your existing styles here */
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #image-container {
+      text-align: center;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* Ensure images don't overflow the container */
+      pointer-events: none; /* Disable touch events for the image container */
+    }
+
+    #custom-container {
+      text-align: center;
+      max-width: 80%;
+      z-index: 1;
+      background: rgba(200, 200, 200, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #custom-text {
+      margin: 0;
+    }
+
+    .arrow-container {
+      display: flex;
+      justify-content: space-between;
+      z-index: 2;
+      padding: 10px;
+      pointer-events: auto; /* Enable touch events for the arrow container */
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      z-index: 2; /* Set a higher z-index to ensure it appears above the images */
+    }
+
+    .arrow {
+      font-size: 18px;
+      cursor: pointer;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 5px;
+      user-select: none;
+    }
+
+    #image-container img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -12,9 +75,7 @@
       const images = [
         'image1.jpg',
         'image2.jpg',
-        'image3.jpg',
-        'image4.jpg',  // Add more images as needed
-        'image5.jpg'
+        'image3.jpg'
       ];
 
       const baseUrl = 'https://raw.githubusercontent.com/jim919/U/main/images/';
@@ -23,12 +84,18 @@
       const customContainer = document.getElementById('custom-container');
       const customText = document.getElementById('custom-text');
       const leftArrow = document.getElementById('left-arrow');
-      const fullscreenButton = document.getElementById('fullscreen-button');
       const rightArrow = document.getElementById('right-arrow');
 
-      function showImage(index) {
-        imageContainer.innerHTML = 'Loading...';
+      // Request fullscreen
+      const requestFullScreen = document.documentElement.requestFullscreen ||
+                                document.documentElement.mozRequestFullScreen ||
+                                document.documentElement.webkitRequestFullscreen ||
+                                document.documentElement.msRequestFullscreen;
+      if (requestFullScreen) {
+        requestFullScreen.call(document.documentElement);
+      }
 
+      function showImage(index) {
         if (index < 0) {
           currentImageIndex = images.length - 1;
         } else if (index >= images.length) {
@@ -40,31 +107,22 @@
         const imageUrl = images[currentImageIndex];
         const imagePath = baseUrl + imageUrl;
 
-        const img = new Image();
-        img.src = imagePath;
+        imageContainer.innerHTML = `<img src="${imagePath}" alt="Image">`;
 
-        img.onload = function () {
-          imageContainer.innerHTML = `<img src="${img.src}" alt="Image">`;
-
-          switch (currentImageIndex) {
-            case 0:
-              customText.textContent = "Γεια σας"; // Greek text for "Hello"
-              break;
-            case 1:
-              customText.textContent = "Όχι"; // Greek text for "No"
-              break;
-            case 2:
-              customText.textContent = "Custom text for image 3";
-              break;
-            default:
-              customText.textContent = "";
-          }
-        };
-
-        img.onerror = function () {
-          console.error(`Failed to load image: ${img.src}`);
-          imageContainer.innerHTML = 'Error loading image';
-        };
+        // Display custom text based on the current image index
+        switch (currentImageIndex) {
+          case 0:
+            customText.textContent = "HI";
+            break;
+          case 1:
+            customText.textContent = "NO";
+            break;
+          case 2:
+            customText.textContent = "Custom text for image 3";
+            break;
+          default:
+            customText.textContent = "";
+        }
       }
 
       function showNextImage() {
@@ -75,53 +133,28 @@
         showImage(currentImageIndex - 1);
       }
 
-      function toggleFullscreen() {
-        const elem = document.documentElement;
-
-        if (!document.fullscreenElement) {
-          if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-          } else if (elem.mozRequestFullScreen) {
-            elem.mozRequestFullScreen();
-          } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-          } else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
-          }
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-        }
-      }
-
       leftArrow.addEventListener('click', showPreviousImage);
       rightArrow.addEventListener('click', showNextImage);
-      fullscreenButton.addEventListener('click', toggleFullscreen);
 
+      // Touch events for arrows only
       let touchStartX = 0;
-      let touchEndX = 0;
 
       imageContainer.addEventListener('touchstart', function (e) {
         touchStartX = e.touches[0].clientX;
       });
 
       imageContainer.addEventListener('touchend', function (e) {
-        touchEndX = e.changedTouches[0].clientX;
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchThreshold = 50; // Adjust the threshold as needed
 
-        if (touchEndX < touchStartX) {
+        if (touchEndX < touchStartX - touchThreshold) {
           showNextImage(); // Swipe left
-        } else if (touchEndX > touchStartX) {
+        } else if (touchEndX > touchStartX + touchThreshold) {
           showPreviousImage(); // Swipe right
         }
       });
 
+      // Orientation change event for adjusting image size
       window.addEventListener('orientationchange', function () {
         showImage(currentImageIndex);
       });
@@ -136,9 +169,9 @@
     <div id="custom-text"></div>
   </div>
   <div class="arrow-container">
-    <button id="left-arrow" class="arrow" onclick="showPreviousImage()">&lt;</button>
-    <button id="fullscreen-button" class="arrow" onclick="toggleFullscreen()">&#9655;</button>
-    <button id="right-arrow" class="arrow" onclick="showNextImage()">&gt;</button>
+    <div id="left-arrow" class="arrow">&lt;</div>
+    <div id="right-arrow" class="arrow">&gt;</div>
   </div>
 </body>
 </html>
+
