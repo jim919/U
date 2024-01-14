@@ -68,6 +68,8 @@
     document.addEventListener('DOMContentLoaded', function () {
       let currentImageIndex = 0;
       const images = [
+        'image8.jpg',
+        'image1.jpg',
         'image1.jpg',
         'image2.jpg',
         'image3.jpg'
@@ -117,10 +119,15 @@
         // Display custom text based on the current image index
         switch (currentImageIndex) {
           case 0:
-            customText.textContent = "HI";
+            customText.textContent = "";
             break;
           case 1:
-            customText.textContent = "NO";
+            customText.textContent = "Ο θείος μου ήταν ένας βαθύτατα
+εγωκεντρικός χαρακτήρας. Και όμως,
+παρά την συχνά αντιφατική του
+προσωπικότητα πάντα πετύχαινε να
+προκαλεί τον θαυμασμό και σεβασμό των
+γύρω του.";
             break;
           case 2:
             customText.textContent = "Custom text for image 3";
